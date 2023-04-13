@@ -10,6 +10,8 @@ struct Tarea {
     int duracion; // entre 10 – 100
 }typedef tarea;
 
+tarea* buscaTarea(tarea** tareaPend, tarea** tareaRlzda, int numID, int cantTareas);
+
 int main(){
     srand(time(NULL));
     int canttareas,realizado;
@@ -67,6 +69,47 @@ int main(){
         
           
     }
+
+    // BUSCA-TAREA
+
+    tarea* aBuscar = buscaTarea(tareaspend, tareasraliz, 1, canttareas);
+    printf("Tarea buscada:\n");
+    printf("No de ID: %d\n", aBuscar->tareaID);
+    printf("Descripcion: %s\n", aBuscar->descripcion);
+    printf("Duracion: %d\n", aBuscar->duracion);
+
+    //////////////////////////////////////
+
+
+
     
     return 0;
+}
+
+tarea* buscaTarea(tarea** tareaPend, tarea** tareaRlzda, int numID, int cantTareas){
+    
+    
+    for (int i = 0; i < cantTareas; i++)
+    {
+        if (tareaPend[i]!= NULL)
+        {
+           if (tareaPend[i]->tareaID == numID)
+           {
+            return tareaPend[i];
+           }
+           
+        }
+        if (tareaRlzda[i]!= NULL)
+        {
+           if (tareaRlzda[i]->tareaID == numID)
+           {
+            return tareaRlzda[i];
+           }
+           
+        }
+        
+        
+        
+    }
+    
 }
