@@ -16,12 +16,11 @@ struct Nodo{
 };
 typedef struct Nodo Nodo;
 
-int tareaID = 0;
+int tareaID = 1;
 int *ptarea = &tareaID;
 
 
 Nodo* CrearListaVacia();
-
 Nodo* CrearNodo(tarea nuevaTarea);
 tarea* CrearTarea();
 void insertarALista(Nodo ** Starpend, Nodo* tareaACargar);
