@@ -16,14 +16,18 @@ struct Nodo{
 };
 typedef struct Nodo Nodo;
 
+int tareaID = 0;
+int *ptarea = &tareaID;
+
 
 Nodo* CrearListaVacia();
 
-Nodo* cargarTarea(int tareaID) ;
-void insertarAPendiente(Nodo ** Starpend, Nodo* tareaACargar);
+Nodo* CrearNodo(tarea nuevaTarea);
+tarea* CrearTarea();
+void insertarALista(Nodo ** Starpend, Nodo* tareaACargar);
 Nodo * quitarNodo(Nodo** Starpendm);
 Nodo* moverARealizado(Nodo* Starpend, Nodo** StarRealizado);
-void mostrarTareas(Nodo* Starpend, Nodo* StarRealizado);
+void mostrarTareas(Nodo* star);
 Nodo* buscaTarea(Nodo* Starpend, Nodo* StarRealizado, int numID);
 Nodo* buscaTareaPPalabra(Nodo* Starpend, Nodo* StarRealizado, char needle[]);
 int main(){
@@ -35,33 +39,36 @@ int main(){
     StarPendiente = CrearListaVacia();
     StarRealizado = CrearListaVacia();
 
+    tarea* nuevatarea = malloc(sizeof(tarea));
     int cargar = 1;
     char buffer[TAMA];
-    int tareaID = 0;
-    int realizado;
+
     int numID;
+    int realizado;
     char palabrabusqueda[TAMA];
 
     while (cargar != 0)
     {
             //DATOS DE LA TAREA
-
-
-        Nodo* NuevaTarea= cargarTarea(tareaID);
-        tareaID++;
-        insertarAPendiente(&StarPendiente, NuevaTarea);
+        tarea* nueva = CrearTarea();
+        Nodo* NuevoNodo= CrearNodo(*nueva);
+        insertarALista(&StarPendiente, NuevoNodo);
         printf("Desea cargar una nueva tarea (1:SI, 0:NO)\n");
         scanf("%d", &cargar);
+        fflush(stdin);
     }
 
     StarPendiente = moverARealizado(StarPendiente, &StarRealizado);
 
     //  MOSTRAR TAREAS  
-    mostrarTareas(StarPendiente, StarRealizado);
+   
+    mostrarTareas(StarPendiente);
+    mostrarTareas(StarRealizado);
 
     
     printf("Ingrese el numero de ID de la tarea que quiere buscar:\n");
     scanf("%d", &numID);
+    fflush(stdin);
 
     Nodo* buscada = buscaTarea(StarPendiente, StarRealizado, numID);
 
@@ -76,8 +83,6 @@ int main(){
     printf("Num ID: %d\n", BuscadaPPlabra->T.tareaID);
     printf("Descripcion: %s\n", BuscadaPPlabra->T.descripcion);
     printf("Duracion: %d\n", BuscadaPPlabra->T.duracion);
-
-
     
      return 0;
 }
@@ -85,25 +90,27 @@ int main(){
 Nodo* CrearListaVacia(){
     return NULL;
 }
-Nodo* cargarTarea(int tareaID ){
+tarea* CrearTarea(){
     char buffer[TAMA];
     tarea *nuevaTarea = malloc(sizeof(tarea));
-    nuevaTarea->tareaID= tareaID + 1; 
+    nuevaTarea->tareaID= (*ptarea)++;
     printf("Ingrese la descripcion de la tarea\n");
     scanf("%s", &buffer);
     fflush(stdin);
     nuevaTarea->descripcion = malloc(sizeof(buffer+1));
     strcpy(nuevaTarea->descripcion, buffer);
     nuevaTarea->duracion= 10 + rand() % 90;
-/*     printf("%d", nuevaTarea->duracion); */
+    return nuevaTarea;
+}
+Nodo* CrearNodo(tarea nuevaTarea){
+    
     Nodo* NuevoNodo = malloc(sizeof(Nodo));
-    NuevoNodo->T = *nuevaTarea;
+    NuevoNodo->T = nuevaTarea;
     NuevoNodo->Siguiente = NULL;
-/*     printf("%d", NuevoNodo->T.duracion); */
 
 return NuevoNodo;
 }
-void insertarAPendiente(Nodo ** Starpend, Nodo* tareaACargar){
+void insertarALista(Nodo ** Starpend, Nodo* tareaACargar){
     Nodo* nuevaTarea = tareaACargar;
     nuevaTarea->Siguiente = *Starpend;
     *Starpend = nuevaTarea;
@@ -142,25 +149,14 @@ Nodo* moverARealizado(Nodo* StarPend, Nodo** StarRealizado){
     
 
 }
-void mostrarTareas(Nodo* Starpend, Nodo* StarRealizado){
-    while (StarRealizado != NULL)
+void mostrarTareas(Nodo* star){
+    while (star != NULL)
     {
-        printf("TAREAS REALIZADAS:\n");
-        printf("No de ID: %d\n", StarRealizado->T.tareaID);
-        printf("Descripcion: %s\n", StarRealizado->T.descripcion);
-        printf("Duracion: %d\n", StarRealizado->T.duracion);
-        StarRealizado = StarRealizado->Siguiente; 
+        printf("No de ID: %d\n", star->T.tareaID);
+        printf("Descripcion: %s\n", star->T.descripcion);
+        printf("Duracion: %d\n", star->T.duracion);
+        star = star->Siguiente; 
     }
-    
-    while (Starpend != NULL)
-    {
-         printf("TAREAS PENDIENTES:\n");
-         printf("No de ID: %d\n", Starpend->T.tareaID);
-        printf("Descripcion: %s\n", Starpend->T.descripcion);
-        printf("Duracion: %d\n", Starpend->T.duracion);
-        Starpend = Starpend->Siguiente; 
-    }
-    
 }
 
 Nodo* buscaTarea(Nodo* Starpend, Nodo* StarRealizado, int numID){
@@ -197,7 +193,7 @@ Nodo* buscaTareaPPalabra(Nodo* Starpend, Nodo* StarRealizado, char needle[]){
         {
             return StarRealizado;
         }
-        StarRealizado = StarRealizado->Siguiente;
+        StarRealizado = StarRealizado->Siguiente; 
     }
  return NULL;
 }
